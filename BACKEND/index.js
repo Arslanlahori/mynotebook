@@ -7,8 +7,10 @@ const app = express()
 const port = 3000
 
 // app.get('/', (req, res) => {
-//     res.send('Hello World!')
+//     res.send('This is my backend app')
 // })
+
+app.use(express.json())
 
 //Available Routes
 app.use('/api/auth', require('./Routes/auth'))

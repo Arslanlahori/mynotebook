@@ -15,15 +15,25 @@ router.post('/', [
 ], (req, res) => {
     const result = validationResult(req);
     if (result.isEmpty()) {
-        const users = USER(req.body)
-        users.save()
-        return res.send(`Your data, ${JSON.stringify(users)}!`);
+        //const users = USER(req.body)
+        // users.save()  
+        USER.create(
+            {
+                Name: req.body.Name,
+                email: req.body.Email,
+                password: req.body.Password
+            }).then(user => res.JSON(user));
+        return res.send(`Your data, ${JSON.stringify(req.body)}!`);
 
     }
-    res.send({ errors: result.array() });
+
     // console.log(req.body);
     // const users = USER(req.body);
     // users.save()
+
+    res.send({ errors: result.array() });
+
+
 })
 
 module.exports = router;

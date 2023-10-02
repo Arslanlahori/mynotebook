@@ -20,8 +20,8 @@ router.post('/', [
         USER.create(
             {
                 Name: req.body.Name,
-                email: req.body.Email,
-                password: req.body.Password
+                Email: req.body.Email,
+                Password: req.body.Password
             }).then(user => res.JSON(user));
         return res.send(`Your data, ${JSON.stringify(req.body)}!`);
 

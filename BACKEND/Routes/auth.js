@@ -3,6 +3,10 @@ const router = express.Router();
 const USER = require('../Models/User');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+//Secret key
+const JWT_SECRET = "Arslanansari@12345isaintelligentboy"
 
 
 
@@ -32,13 +36,24 @@ router.post('/createuser', [
         if (existingUser) {
             return res.status(400).json({ error: "Email already exists" });
         }
-        //use bcrypt library to convert the password into hash
+        //use bcrypt library to convert the password into encrypt password
         const salt = await bcrypt.genSalt(10);
         const secpassword = await bcrypt.hash(req.body.Password, salt)
+
+
         //for new user
         const newUser = new USER({ Name, Email, Password: secpassword });
         await newUser.save();
-        return res.json(newUser);
+        //use webtoken
+        const data = {
+            newUser: {
+                id: newUser.id
+            }
+        }
+        const token = jwt.sign(data, JWT_SECRET);
+        console.log(token);
+        res.json({ token: token });
+        // return res.json(newUser);
 
         //catch error
     } catch (err) {

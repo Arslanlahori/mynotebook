@@ -8,32 +8,34 @@ const { body, validationResult } = require('express-validator');
 //create a USER using post :'api/auth'
 
 router.post('/', [
-    body('Name', 'please enter name whose length greater than 4').isLength({ min: 4 }),
-    body('Email', 'please enter valid email').isEmail(),
-    body('Password', 'please enter Password whose length greater than 5').isLength({ min: 5 })
-
-], (req, res) => {
+    body('Name', 'Please enter a name with a minimum length of 4 characters').isLength({ min: 4 }),
+    body('Email', 'Please enter a valid email').isEmail(),
+    body('Password', 'Please enter a password with a minimum length of 5 characters').isLength({ min: 5 })
+], async (req, res) => {
     const result = validationResult(req);
-    if (result.isEmpty()) {
-        //const users = USER(req.body)
-        // users.save()  
-        USER.create(
-            {
-                Name: req.body.Name,
-                Email: req.body.Email,
-                Password: req.body.Password
-            }).then(user => res.JSON(user));
-        return res.send(`Your data, ${JSON.stringify(req.body)}!`);
 
+    if (!result.isEmpty()) {
+        const errors = result.array().map(error => error.msg);
+        return res.status(400).json({ errors });
     }
 
-    // console.log(req.body);
-    // const users = USER(req.body);
-    // users.save()
+    const { Name, Email, Password } = req.body;
 
-    res.send({ errors: result.array() });
+    try {
+        const existingUser = await USER.findOne({ Email });
 
+        if (existingUser) {
+            return res.status(400).json({ error: "Email already exists" });
+        }
 
-})
+        const newUser = new USER({ Name, Email, Password });
+        await newUser.save();
+        return res.json(newUser);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error" });
+    }
+});
+
 
 module.exports = router;

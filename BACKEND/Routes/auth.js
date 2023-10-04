@@ -45,12 +45,13 @@ router.post('/createuser', [
         //for new user
         const newUser = new USER({ Name, Email, Password: secpassword });
         await newUser.save();
+
         //use webtoken
-        const data = {
-            newUser: {
-                id: newUser.id
-            }
-        }
+        const data = newUser.id
+        console.log(data)
+
+
+
 
         const token = jwt.sign(data, JWT_SECRET);
         res.json({ token });
@@ -96,11 +97,8 @@ router.post('/login', [
             if (!comparepassword) {
                 return res.status(400).json({ error: "Please Enter the valid Credentials" });
             }
-            const data = {
-                existingUser: {
-                    id: existingUser.id
-                }
-            }
+            const data = existingUser.id
+            console.log(data)
             const token = jwt.sign(data, JWT_SECRET);
             res.json({ token });
             // return res.json(newUser);
@@ -116,9 +114,9 @@ router.post('/login', [
 //Route 3 Getuserdetail using post :'api/auth/Getuserdetail' login required
 router.post('/Getuserdetail', fetchuser, async (req, res) => {
     try {
-        const existingUser = req.existingUser.id;
-        const user = await USER.findById(existingUser).select('-Password')
-        return res.json(user);
+        const userId = req.newUser;
+        const userop = await USER.findById(userId).select('-Password')
+        return res.json(userop);
 
     }
     catch (error) {

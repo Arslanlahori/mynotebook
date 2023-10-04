@@ -48,7 +48,7 @@ router.post('/createuser', [
 
         //use webtoken
         const data = newUser.id
-        console.log(data)
+
 
 
 

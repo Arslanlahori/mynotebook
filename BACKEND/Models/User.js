@@ -16,9 +16,11 @@ const UserSchema = new Schema({
     },
     Date: {
         type: Date,
-        Default: Date.now
+        default: Date.now
     }
 });
+// const User = mongoose.model('User', UserSchema);
+// User.createIndexes();
+// module.exports = User;
 const User = mongoose.model('User', UserSchema);
-User.createIndexes();
 module.exports = User;

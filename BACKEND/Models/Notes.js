@@ -1,24 +1,34 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const NotesSchema = new Schema({
+
+    //USER model link connection
+    User: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+        //user model se liya hy means reference
+
+    },
     Title: {
-        type: string,
+        type: String,
         require: true
     },
     Description: {
-        type: string,
+        type: String,
         require: true,
 
     },
     Tag: {
-        type: string,
+        type: String,
         default: 'General'
 
     },
     Date: {
         type: Date,
-        Default: Date.now
+        default: Date.now
     }
 });
 
-module.exports = mongoose.model('Notes', NotesSchema);
+// const NOTES = mongoose.model('NOTES', NotesSchema);
+// NOTES.createIndexes();
+module.exports = mongoose.model('NOTES', NotesSchema);

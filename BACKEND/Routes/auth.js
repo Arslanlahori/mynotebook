@@ -4,13 +4,14 @@ const USER = require('../Models/User');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fetchuser = require('../middleware/fetchuser');
 
 //Secret key
 const JWT_SECRET = "Arslanansari@12345isaintelligentboy"
 
 
 
-//create a USER using post :'api/auth/createuser'
+// Route1:create a USER using post :'api/auth/createuser'
 
 router.post('/createuser', [
     body('Name', 'Please enter a name with a minimum length of 4 characters').isLength({ min: 4 }),
@@ -50,8 +51,9 @@ router.post('/createuser', [
                 id: newUser.id
             }
         }
+
         const token = jwt.sign(data, JWT_SECRET);
-        res.json({ token: token });
+        res.json({ token });
         // return res.json(newUser);
 
         //catch error
@@ -66,7 +68,7 @@ router.post('/createuser', [
 
 
 
-//Authenticate end point using post :'api/auth/login'
+//Route 2 Authenticate end point login using post :'api/auth/login'
 
 router.post('/login', [
 
@@ -100,7 +102,7 @@ router.post('/login', [
                 }
             }
             const token = jwt.sign(data, JWT_SECRET);
-            res.json({ token: token });
+            res.json({ token });
             // return res.json(newUser);
 
         }
@@ -109,6 +111,23 @@ router.post('/login', [
             return res.status(500).json({ error: "Enternal Serve Error" });
         }
 
-    })
+    });
+
+//Route 3 Getuserdetail using post :'api/auth/Getuserdetail' login required
+router.post('/Getuserdetail', fetchuser, async (req, res) => {
+    try {
+        const existingUser = req.existingUser.id;
+        const user = await USER.findById(existingUser).select('-Password')
+        return res.json(user);
+
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Enternal Serve Error" });
+
+    }
+});
+
+
 
 module.exports = router;

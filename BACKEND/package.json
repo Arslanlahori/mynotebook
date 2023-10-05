@@ -4,7 +4,7 @@
   "description": "Your notebook on the Cloud",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js --w"
+    "start": "nodemon ./index.js --watch ./BACKEND"
   },
   "author": "",
   "license": "ISC",

@@ -17,5 +17,5 @@ app.use('/api/auth', require('./Routes/auth'))
 app.use('/api/Notes', require('./Routes/Notes'))
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`My notes run on port ${port}`)
 })

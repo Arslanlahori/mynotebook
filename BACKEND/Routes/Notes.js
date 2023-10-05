@@ -3,6 +3,7 @@ const router = express.Router();
 const NOTES = require('../Models/Notes');
 const fetchuser = require('../middleware/fetchuser');
 const { body, validationResult } = require('express-validator');
+const Notes = require('../Models/Notes');
 
 
 //create 2 route for geting notes --login required
@@ -50,5 +51,39 @@ router.post('/addnotes', fetchuser, [
         }
 
     })
+
+// Route 3: Update a note using the PUT method (login required) /api/Notes/update/:id
+router.put('/update/:id', fetchuser, async (req, res) => {
+    const { Title, Description, Tag } = req.body;
+
+    // Create a new notes object
+    const newNotes = {};
+    if (Title) { newNotes.Title = Title; }
+    if (Description) { newNotes.Description = Description; }
+    if (Tag) { newNotes.Tag = Tag; }
+
+    try {
+        // Find the note to be updated
+        let note = await NOTES.findById(req.params.id);
+
+        // If the note is not found
+        if (!note) {
+            return res.status(404).json({ error: 'Note not found' });
+        }
+
+        // Check if the user making the request is the owner of the note
+        if (note.User.toString() !== req.newUser) {
+            return res.status(401).json({ error: 'Not allowed' });
+        }
+
+        // Update the note
+        note = await NOTES.findByIdAndUpdate(req.params.id, { $set: newNotes }, { new: true });
+        return res.json({ note });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 module.exports = router;

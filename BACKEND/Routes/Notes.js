@@ -83,7 +83,37 @@ router.put('/update/:id', fetchuser, async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: 'Internal Server Error' });
     }
-});
 
+
+
+
+
+});
+//Route no 4 Detele a note login is required
+
+router.delete('/delete/:id', fetchuser, async (req, res) => {
+    try {
+        // Find the note to be deleted
+        let note = await NOTES.findById(req.params.id);
+
+        // If the note is not found
+        if (!note) {
+            return res.status(404).json({ error: 'Note not found' });
+        }
+
+        // Check if the user making the request is the owner of the note
+        if (note.User.toString() !== req.newUser) {
+            return res.status(401).json({ error: 'Not allowed' });
+        }
+
+        // Delete the note
+        note = await NOTES.findByIdAndDelete(req.params.id);
+        return res.json({ Response: "Successfully deleted" });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+});
 
 module.exports = router;
